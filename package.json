@@ -1,0 +1,43 @@
+{
+  "name": "react-compiler",
+  "version": "0.0.0",
+  "description": "Compiler generator using React.js",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "babel": {
+    "presets": [
+      "latest"
+    ],
+    "plugins": [
+      "transform-class-properties",
+      "transform-object-rest-spread",
+      "transform-react-jsx"
+    ]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src --out-dir dist",
+    "prepublish": "npm run build",
+    "pretest": "babel src --out-dir build/src && babel tests --out-dir build/tests",
+    "test": "node build/tests/index.js"
+  },
+  "keywords": [
+    "react",
+    "compiler"
+  ],
+  "author": "bronter",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
+    "babel-preset-latest": "^6.16.0"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  }
+}

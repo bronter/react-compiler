@@ -1,8 +1,10 @@
 import React from "react";
+import {autobind} from "core-decorators";
 import Cursor from "../cursor";
 import All from "./all";
 
-export default class Node extends React.Component {
+@autobind
+export default class NonTerminal extends React.Component {
   static contextTypes = {
     mode: React.PropTypes.string,
     cursor: React.PropTypes.object,
@@ -15,6 +17,14 @@ export default class Node extends React.Component {
     seen: React.PropTypes.any,
   };
 
+  static propTypes = {
+    ast: React.PropTypes.bool,
+  };
+
+  static defaultProps = {
+    ast: false,
+  };
+
   constructor(props, context) {
     super(props, context);
     this.cursor = context.cursor;
@@ -24,15 +34,16 @@ export default class Node extends React.Component {
     let seen = {...this.context.seen};
     // HACK? this.constructor.name might break with uglify, apparently.
     if (!(this.constructor.name in seen)) {
-      const dis = React.createElement(
-        Object.create(this),
-        this.props,
-        ...React.Children.toArray(this.children)
-      );
-      seen[this.constructor.name] = dis;
+      // const dis = React.createElement(
+      //   Object.create(this),
+      //   this.props,
+      //   ...React.Children.toArray(this.children)
+      // );
+      seen[this.constructor.name] = true;
     }
     return {
       ...this.context,
+      mode: this.props && this.props.ast ? "ast" : this.context.mode,
       seen,
       cursor: this.cursor,
     };
@@ -40,12 +51,15 @@ export default class Node extends React.Component {
 
   parse() {
     if (React.Children.count(this.props.children) === 1) {
+      console.log("One child");
       return React.Children.only(this.props.children).parse();
     } else {
       const children = React.Children.toArray(this.props.children);
 
       // Create a cursor if we don't already have one
       const oldCursor = this.context.cursor || new Cursor(0);
+      console.log("Multiple children, cursor pos is: ", oldCursor.pos,
+                  " this.constructor.name is: ", this.constructor.name);
 
       this.cursor = new Cursor(oldCursor.pos);
 
@@ -59,9 +73,9 @@ export default class Node extends React.Component {
       oldCursor.pos = this.cursor.pos;
 
       return (
-        <Node>
+        <NonTerminal ast>
           {newChildren}
-        </Node>
+        </NonTerminal>
       );
     }
   }
@@ -83,20 +97,13 @@ export default class Node extends React.Component {
   }
 
   define() {
-    return null;
-    // console.log("this.props.children is ", this.props.children);
-    // const count = React.Children.count(this.props.children);
-    // if (count === 0) {
-    //   return null;
-    // } else if (count === 1) {
-    //   return React.createElement(this.props.children);
-    // } else { // Default to All node behavior if multiple children
-    //   return (
-    //     <All>
-    //       {this.props.children}
-    //     </All>
-    //   )
-    // }
+    console.log("this.props.children is ", React.Children.count(this.props.children));
+
+    return (
+      <All>
+        {this.props.children}
+      </All>
+    );
   }
 
   render() {
@@ -104,7 +111,7 @@ export default class Node extends React.Component {
     // will be available in props
     const mode = this.context.mode || this.props.mode;
     console.log("name: ", this.constructor.name);
-    console.log("mode: ", this.context.mode);
+    console.log("mode: ", mode);
     if (mode === "define") {
       const childCount = React.Children.count(this.props.children);
       // We've rendered this node before, so don't recurse infinitely
@@ -117,9 +124,12 @@ export default class Node extends React.Component {
       if (this.context.seen != null && this.constructor.name in this.context.seen)
         return null;
       // Haven't seen this node before, go ahead and actually render it
+      console.log("not seen, running define");
       return this.define();
     } else if (mode === "parse") {
       return this.parse();
+    } else {
+      return null;
     }
   }
 };

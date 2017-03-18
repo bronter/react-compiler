@@ -10,7 +10,7 @@ export default class Compiler {
 
     // Now parse the input and generate an AST
     const ast = React.cloneElement(root, {mode: "parse", input})
-    ReactDOM.renderToString(ast);;
+    ReactDOM.renderToString(ast);
 
     return ast;
   }

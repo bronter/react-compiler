@@ -1,8 +1,11 @@
-import {Compiler, Node, All, One, Integer, Token, Sequence} from "../src";
+import React from "react";
+import {Compiler, All, One, Integer, Token, Sequence} from "../src";
 
-console.log("Node is", Node);
-
-class Expression extends Node {
+class Expression extends React.Component {
+  constructor(prop, context) {
+    super(props, context);
+    console.log(this.constructor.name, super.constructor.name);
+  }
   define() {
     return (
       <All>
@@ -23,7 +26,7 @@ class Expression extends Node {
   }
 }
 
-class BinaryExpresssion extends Node {
+class BinaryExpresssion extends React.Component {
   define() {
     return (
       <All>

@@ -2,8 +2,8 @@ import All from "./all";
 import One from "./one";
 import Some from "./some";
 import Integer from "./integer";
-import Node from "./node";
+import NonTerminal from "./nonterminal";
 import Sequence from "./sequence";
 import Token from "./token";
 
-export {All, One, Some, Integer, Node, Sequence, Token};
+export {All, One, Some, Integer, NonTerminal, Sequence, Token};

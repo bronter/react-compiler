@@ -1,5 +1,7 @@
 import React from "react";
+import {autobind} from "core-decorators";
 
+@autobind
 export default class All extends React.Component {
   static contextTypes = {
     mode: React.PropTypes.string,
@@ -8,6 +10,7 @@ export default class All extends React.Component {
 
   static childContextTypes = {
     cursor: React.PropTypes.object,
+    mode: React.PropTypes.string,
   };
 
   static propTypes = {
@@ -56,8 +59,12 @@ export default class All extends React.Component {
   }
 
   define() {
-    console.log("In define, this is: ", this);
-    return this.props.children;
+    if (Array.isArray(this.props.children)) {
+      this.props.children.map(child => console.log(child));
+    } else {
+      console.log(this.props.children);
+    }
+    return null;
   }
 
   render() {
